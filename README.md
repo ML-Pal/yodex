@@ -28,6 +28,18 @@ self-hosted, against any model the gateway serves. Get an API key either way:
 ```bash
 export YODEX_API_KEY=mlpal_sk_...   # create your key at https://mlpal.ai
 
+cd your-project
+yodex                               # interactive session in this repo
+```
+
+Yodex picks up your project's context automatically: a `YODEX.md`, `AGENTS.md`,
+or `CLAUDE.md` at the repo root, plus any skills, MCP servers, and plugin packs
+you have configured. Run `/init` inside a session to analyze the repo and write
+an `AGENTS.md` for you.
+
+You can also run one-shot tasks:
+
+```bash
 yodex "explain this repository"
 yodex "fix the failing tests"
 yodex "find the cause of this regression and patch it"
