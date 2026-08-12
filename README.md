@@ -219,7 +219,7 @@ Keys can be created at [mlpal.ai](https://mlpal.ai).
 
 ### Self-hosted
 
-The gateway is open source at [github.com/mlpalOld/mlpal-gateway](https://github.com/mlpalOld/mlpal-gateway) (Apache-2.0) and can be started with Docker Compose.
+The gateway is open source at [github.com/ML-Pal/mlpal-gateway](https://github.com/ML-Pal/mlpal-gateway) (Apache-2.0) and can be started with Docker Compose.
 
 ```bash
 export YODEX_GATEWAY_URL=http://localhost:8000

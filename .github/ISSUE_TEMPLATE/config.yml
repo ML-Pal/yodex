@@ -1,5 +1,5 @@
 blank_issues_enabled: true
 contact_links:
   - name: MLPal Gateway (self-hosted) issues
-    url: https://github.com/mlpalOld/mlpal-gateway/issues
+    url: https://github.com/ML-Pal/mlpal-gateway/issues
     about: For gateway/server-side problems rather than the yodex CLI itself.
