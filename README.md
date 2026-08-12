@@ -51,7 +51,7 @@ can run on a premium model, a cheap model, or a per-task mix chosen by a router.
   a live panel; multi-agent workflows are scriptable and resumable.
 - **Cross-repo coordination** — sessions share one store, so an agent in one
   repository can discover agents in others and hand them self-contained work
-  through a mailbox. No mainstream coding agent offers this.
+  through a mailbox, receiving back a compact report.
 - **Extensible** — MCP servers, skills, and Claude-Code-compatible plugin packs
   install as-is.
 
@@ -118,8 +118,10 @@ quoting numbers.
 ## Roadmap & feedback
 
 Feature requests and bug reports are welcome —
-[open an issue](../../issues/new/choose). The terminal TUI is shipping today;
-web and editor frontends consume the same engine stream and are next.
+[open an issue](../../issues/new/choose). The terminal CLI is available now;
+web and editor frontends consume the same engine stream and are in development.
+
+Contact: contact@mlpal.ai
 
 ## License
 

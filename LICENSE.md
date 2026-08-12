@@ -1,7 +1,7 @@
 © 2026 mlpal inc. All rights reserved.
 
 yodex is commercial software of mlpal inc (1721 Arlington Boulevard, El Cerrito,
-CA 94530, US).
+CA 94530, US · contact@mlpal.ai).
 
 You are granted a limited, non-exclusive, non-transferable license to install
 and run yodex as distributed by mlpal (the `@mlpal/yodex` package on npm) for
