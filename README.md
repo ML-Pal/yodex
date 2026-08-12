@@ -26,7 +26,7 @@ Get an API key either way:
   Yodex at your box: `export YODEX_GATEWAY_URL=http://localhost:8000`.
 
 ```bash
-export YODEX_API_KEY=mlpal_sk_...
+export YODEX_API_KEY=mlpal_sk_...   # create your key at https://mlpal.ai
 
 yodex "explain this repository"
 yodex "fix the failing tests"
