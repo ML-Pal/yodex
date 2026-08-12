@@ -15,8 +15,8 @@
 npm install -g @mlpal/yodex
 ```
 
-Yodex runs coding-agent workflows against any model available through an MLPal Gateway.
-Get an API key either way:
+Yodex is a coding agent — a harness that works with an MLPal Gateway, managed or
+self-hosted, against any model the gateway serves. Get an API key either way:
 
 - **Managed** — create a key at **[mlpal.ai](https://mlpal.ai)**. Yodex talks to
   `https://models.mlpal.ai` by default; the key is all you need.
