@@ -1,10 +1,18 @@
-# Yodex
+<p align="center">
+  <img src="assets/demo.gif" alt="Yodex analyzing a repository in the terminal" width="820">
+</p>
 
-**A provider-agnostic coding agent.** One harness that drives Anthropic, OpenAI,
-Google, and open-weight models — anything your gateway serves — through a single
-API key, with cost-aware routing built in.
+<h1 align="center">Yodex</h1>
 
-[![npm](https://img.shields.io/npm/v/%40mlpal%2Fyodex)](https://www.npmjs.com/package/@mlpal/yodex)
+<p align="center"><b>A provider-agnostic coding agent.</b><br>
+One harness that drives Anthropic, OpenAI, Google, and open-weight models —
+anything your gateway serves — through a single API key.</p>
+
+<p align="center">
+  <a href="https://www.npmjs.com/package/@mlpal/yodex"><img src="https://img.shields.io/npm/v/%40mlpal%2Fyodex" alt="npm"></a>
+  <a href="paper/yodex-harness-paper-v2.pdf"><img src="https://img.shields.io/badge/paper-PDF-blue" alt="paper"></a>
+  <a href="LICENSE.md"><img src="https://img.shields.io/badge/license-proprietary-lightgrey" alt="license"></a>
+</p>
 
 ```bash
 npm install -g @mlpal/yodex
@@ -18,18 +26,21 @@ npm install -g @mlpal/yodex
 ## Why Yodex
 
 A coding agent is a *harness* — the loop of tool use, verification, context
-management, and recovery — wrapped around a model. Leading agents weld a mature
-harness to one vendor's models, so you pay that vendor's premium on every token
-whether the task needs it or not.
+management, and recovery — wrapped around a model. Public benchmarks vary the
+model and hold the harness fixed, so they measure model quality; in production
+it is the harness that sets cost, latency, safety, and portability. Leading
+agents fuse a mature harness to one vendor's models, so you pay that vendor's
+premium on every token whether the task needs it or not.
 
-Our hypothesis: **provider-agnosticism matters, but it is not a model-count
-contest.** Models are retiring at a record pace — models that topped leaderboards
-a year ago are being end-of-lifed today. The metric that matters is whether your
-agent's *utility survives model churn*. Yodex speaks one wire format to an AI
-gateway that translates to every provider, and references **stable cost tiers**
-(`max / frontier / mid / cheap`) rather than model names — so a model retirement
-is a server-side curation update, never a client migration, and the same task
-can run on a premium model, a cheap model, or a per-task mix chosen by a router.
+Yodex decouples the harness from the model. Every call flows through an MLPal
+gateway in one wire format; the harness carries zero provider-specific code and
+references **stable cost tiers** (`max / frontier / mid / cheap`) rather than
+model names. Under same-model isolation — both harnesses on the identical
+model — Yodex matches or exceeds Claude Code on resolution while using fewer
+output tokens and less wall clock ([paper](paper/yodex-harness-paper-v2.pdf)).
+The gateway side handles model churn: tier mappings and router tags are updated
+server-side as models ship and retire, so a retirement is a curation update,
+never a client migration.
 
 - **Model-agnostic by construction** — zero provider-specific code in the
   harness; pick any served model or tier per invocation (`--model claude-opus-5`,
