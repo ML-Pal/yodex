@@ -1,7 +1,3 @@
-<p align="center">
-  <img src="assets/demo.gif" alt="Yodex analyzing a repository in the terminal" width="820">
-</p>
-
 <h1 align="center">Yodex</h1>
 
 <p align="center"><b>A provider-agnostic coding agent.</b><br>
@@ -41,6 +37,10 @@ output tokens and less wall clock ([paper](paper/yodex-harness-paper-v2.pdf)).
 The gateway side handles model churn: tier mappings and router tags are updated
 server-side as models ship and retire, so a retirement is a curation update,
 never a client migration.
+
+<p align="center">
+  <img src="assets/demo.gif" alt="Yodex analyzing a repository in the terminal (2× speed)" width="900">
+</p>
 
 - **Model-agnostic by construction** — zero provider-specific code in the
   harness; pick any served model or tier per invocation (`--model claude-opus-5`,
