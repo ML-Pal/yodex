@@ -1,8 +1,9 @@
 <h1 align="center">Yodex</h1>
 
-<p align="center"><b>A provider-agnostic coding agent.</b><br>
-One harness that drives Anthropic, OpenAI, Google, and open-weight models —
-anything your gateway serves — through a single API key.</p>
+<p align="center">
+  <b>A provider-agnostic coding agent.</b><br>
+  Use Anthropic, OpenAI, Google, and open-weight models through the same agent harness.
+</p>
 
 <p align="center">
   <a href="https://www.npmjs.com/package/@mlpal/yodex"><img src="https://img.shields.io/npm/v/%40mlpal%2Fyodex" alt="npm"></a>
@@ -14,128 +15,239 @@ anything your gateway serves — through a single API key.</p>
 npm install -g @mlpal/yodex
 ```
 
-> **About this repo:** Yodex's source is not published — the CLI ships via
-> [npm](https://www.npmjs.com/package/@mlpal/yodex). This repo is the public
-> home for the technical report, benchmarks, docs — and **your feature requests
-> and bug reports**: [open an issue](../../issues/new/choose).
+Yodex runs coding-agent workflows against any model available through an MLPal Gateway.
 
-## Why Yodex
+```bash
+export YODEX_API_KEY=mlpal_sk_...
 
-A coding agent is a *harness* — the loop of tool use, verification, context
-management, and recovery — wrapped around a model. Public benchmarks vary the
-model and hold the harness fixed, so they measure model quality; in production
-it is the harness that sets cost, latency, safety, and portability. Leading
-agents fuse a mature harness to one vendor's models, so you pay that vendor's
-premium on every token whether the task needs it or not.
+yodex "explain this repository"
+yodex "fix the failing tests"
+yodex "find the cause of this regression and patch it"
+```
 
-Yodex decouples the harness from the model. Every call flows through an MLPal
-gateway in one wire format; the harness carries zero provider-specific code and
-references **stable cost tiers** (`max / frontier / mid / cheap`) rather than
-model names. Under same-model isolation — both harnesses on the identical
-model — Yodex matches or exceeds Claude Code on resolution while using fewer
-output tokens and less wall clock ([paper](paper/yodex-harness-paper-v2.pdf)).
-The gateway side handles model churn: tier mappings and router tags are updated
-server-side as models ship and retire, so a retirement is a curation update,
-never a client migration.
+Choose a specific model:
+
+```bash
+yodex --model claude-opus-5 "review this implementation"
+```
+
+or let Yodex work with model tiers and routing:
+
+```bash
+yodex --model cheap "update these imports"
+yodex --model frontier "debug this concurrency issue"
+yodex --model mlpal "fix this issue"
+```
 
 <p align="center">
   <img src="assets/demo.gif" alt="Yodex analyzing a repository in the terminal (2× speed)" width="900">
 </p>
 
-- **Model-agnostic by construction** — zero provider-specific code in the
-  harness; pick any served model or tier per invocation (`--model claude-opus-5`,
-  `--model cheap`, or the `mlpal` router tag, which always resolves to a current
-  served model).
-- **Cost-aware delegation** — a difficulty gate rates each sub-task and routes it
-  down the gateway's cost ladder: mechanical work to cheap fast models, hard
-  reasoning to frontier ones. Measured effect: **~10× cheaper sub-agents** on
-  decomposable work ([write-up](benchmarks/vs-claude-code-opus5.md)).
-- **A feedback loop that learns** — every delegation outcome feeds per-model
-  routing scores back to the gateway, so catalog picks improve with usage.
-- **Verification without premium tokens** — an edit-gated self-check, an
-  optional adversarial verifier that runs on a *cheap* tier, and an anti-churn
-  breaker.
-- **Deterministic safety** — read/write/edit/shell tools pass a rule layer that
-  runs before permission logic and is never delegated to an LLM.
-- **Parallel and background work** — read-only tool batches and sub-agent
-  fan-out run concurrently; background agents, shells, and monitors report into
-  a live panel; multi-agent workflows are scriptable and resumable.
-- **Cross-repo coordination** — sessions share one store, so an agent in one
-  repository can discover agents in others and hand them self-contained work
-  through a mailbox, receiving back a compact report.
-- **Extensible** — MCP servers, skills, and Claude-Code-compatible plugin packs
-  install as-is.
+> **Repository note:** The Yodex CLI is distributed through [npm](https://www.npmjs.com/package/@mlpal/yodex); its source is not published in this repository.
+>
+> This repository contains documentation, benchmark results, the technical report, and the public issue tracker.
 
-## Quickstart
+## What it does
 
-Yodex talks to an MLPal Gateway — the managed one, or your own self-hosted box:
+Yodex provides the agent loop around the model: tool use, context management, verification, delegation, recovery, permissions, and multi-agent execution.
 
-```bash
-# Managed (default endpoint):
-export YODEX_API_KEY=mlpal_sk_...        # create a key at https://mlpal.ai
-yodex "explain this repo"
+The harness itself is provider-independent.
 
-# Self-hosted (github.com/mlpalOld/mlpal-gateway — Apache-2.0, one docker compose):
-export YODEX_GATEWAY_URL=http://localhost:8000
-export YODEX_API_KEY=mlpal_sk_...        # a key minted in your gateway console
-yodex "fix the failing test"
+### Model routing
+
+Run a specific model or use stable tiers:
+
+```text
+max
+frontier
+mid
+cheap
 ```
 
-Both serve the identical API surface, so nothing else changes. On a small
-self-hosted box the default model resolves availability-aware — a one-provider
-box just works.
+Tier mappings are maintained by the gateway rather than hard-coded into the Yodex client.
 
-## The paper
+### Delegation
 
-📄 **[Decoupling the Harness from the Model](paper/yodex-harness-paper-v2.pdf)**
-*(yodex team · MLPal Research)* — an empirical study under **same-model
-isolation**: competing harnesses run on the identical served model, so any
-difference is the harness. Covers the isolation protocol, official-oracle
-SWE-bench grading with hidden tests, cost/latency analysis across four workload
-tiers and multiple providers, and a transparent account of divergent patches —
-including the one clean Yodex loss.
+Yodex can break work into sub-tasks and run them on different model tiers.
+
+For example, repository search or mechanical edits can run on cheaper models while harder reasoning is routed to stronger models.
+
+### Verification
+
+Yodex supports:
+
+* edit-triggered self-checks
+* optional secondary verification
+* anti-churn protection for repeated unsuccessful edits
+
+### Tool policy
+
+Read, write, edit, and shell operations pass through deterministic policy checks before permission handling.
+
+These checks do not depend on an LLM deciding whether an operation is allowed.
+
+### Parallel and background execution
+
+Independent tool calls and sub-agents can execute concurrently.
+
+Background agents, shells, and monitors report back into the active session.
+
+### Cross-repository agents
+
+Sessions can share a common store.
+
+An agent working in one repository can send a self-contained task to an agent working in another repository and receive the result through a mailbox.
+
+### Extensions
+
+Yodex supports:
+
+* MCP servers
+* skills
+* Claude Code-compatible plugin packages
 
 ## Benchmarks
 
-**From the paper** — same-model isolation on `claude-opus-4-8`, official
-SWE-bench harness, hidden tests:
+We primarily evaluate Yodex using **same-model isolation**: Yodex and the comparison agent use the same underlying model, so differences measure the agent harness rather than the model.
 
-| Task tier | Yodex | Claude Code | Output tokens (CC/Y) | Wall clock (CC/Y) |
-|---|---|---|---|---|
-| Easy (18) | 18/18 | 18/18 | 1.49× | 1.63× |
-| Hard (14) | 14/14 | 13/14 | 1.18× | 1.35× |
-| Long (6) | 6/6 | 6/6 | 1.65× | 1.72× |
-| **SWE-bench_Lite (15)** | **12/15 (80%)** | 11/15 (73%) | **1.76×** | **1.59×** |
+Same model: `claude-opus-4-8`
 
-On a shared GPT model, Yodex resolved 8/10 vs OpenAI Codex's 7/10 with 6.3×
-fewer input tokens; the same harness on cheaper models held correctness while
-cutting cost 7.7–10.1×, and a budget router matched the premium baseline at
-3.08× lower cost.
+| Task tier               |     Yodex | Claude Code | Output tokens (CC/Y) | Wall clock (CC/Y) |
+| ----------------------- | --------: | ----------: | -------------------: | ----------------: |
+| Easy (18)               |     18/18 |       18/18 |                1.49× |             1.63× |
+| Hard (14)               |     14/14 |       13/14 |                1.18× |             1.35× |
+| Long (6)                |       6/6 |         6/6 |                1.65× |             1.72× |
+| **SWE-bench_Lite (15)** | **12/15** |   **11/15** |            **1.76×** |         **1.59×** |
 
-**Follow-up runs on `claude-opus-5`:**
+`CC/Y` means Claude Code divided by Yodex — `1.76×` output tokens means Claude Code produced 1.76× as many output tokens.
 
-- [Harness head-to-head + delegation](benchmarks/vs-claude-code-opus5.md)
-  (2026-07-28): ~1.6–1.8× cheaper on focused fixes at equal correctness; ~2×
-  cheaper end-to-end on delegation-heavy work with catalog routing cutting
-  sub-agent cost ~10×.
-- [SWE-bench recheck](benchmarks/swe-recheck-opus5-2026-08-11.md) (2026-08-11):
-  both agents resolve 2/2 sampled instances; the efficiency margins hold or
-  widen (≈2× output tokens, ≈2× wall clock, ≈6× compute cost).
+<p align="center">
+  <img src="assets/benchmarks.png" alt="Benchmark summary: resolution and output tokens under same-model isolation; cross-harness results on a shared GPT model" width="900">
+</p>
 
-These are our own runs — each write-up carries its methodology and limitations,
-including small N and the authors' conflict of interest. Read those before
-quoting numbers.
+The [technical report](paper/yodex-harness-paper-v2.pdf) also covers Yodex vs OpenAI Codex and Aider on a shared GPT model, the same harness on cheaper models (correctness held at 7.7–10.1× lower cost), a budget router (matched the premium baseline at 3.08× lower cost), and per-instance divergent patch analysis.
 
-## Roadmap & feedback
+Follow-up runs on `claude-opus-5`:
 
-Feature requests and bug reports are welcome —
-[open an issue](../../issues/new/choose). The terminal CLI is available now;
-web and editor frontends consume the same engine stream and are in development.
+* [Harness comparison and delegation](benchmarks/vs-claude-code-opus5.md) (July 2026) — equal correctness on focused fixes at ~1.6–1.8× lower cost; ~10× lower sub-agent cost via catalog routing.
+* [SWE-bench recheck](benchmarks/swe-recheck-opus5-2026-08-11.md) (August 2026) — 2/2 vs 2/2 resolved; ~2× fewer output tokens, ~6× lower compute cost.
 
-Contact: contact@mlpal.ai
+These are experiments conducted by the Yodex authors, some at small sample sizes. Each report includes methodology, raw results, limitations, and the authors' conflict of interest.
+
+## How Yodex works
+
+A coding agent combines a model with a system around it:
+
+```text
+                   ┌───────────────┐
+                   │     Yodex     │
+                   │               │
+                   │ Agent loop    │
+                   │ Tools         │
+                   │ Context       │
+                   │ Verification  │
+                   │ Delegation    │
+                   │ Permissions   │
+                   └───────┬───────┘
+                           │
+                    MLPal Gateway
+                           │
+          ┌────────────────┼────────────────┐
+          │                │                │
+      Anthropic         OpenAI           Google
+          │                │                │
+          └──────── Open-weight models ─────┘
+```
+
+The harness communicates with the gateway using one model interface.
+
+Provider-specific model integrations, model availability, and tier mappings are handled by the gateway.
+
+This means the agent loop does not need to change when the underlying model changes.
+
+## Why separate the harness from the model?
+
+Coding-agent performance depends on more than model capability.
+
+The surrounding system determines:
+
+* which context reaches the model
+* when tools are called
+* how changes are verified
+* how failures are handled
+* when work is delegated
+* which model handles each sub-task
+* how much inference is consumed to complete the task
+
+Most model evaluations keep this surrounding system fixed and compare models.
+
+Yodex explores the opposite question:
+
+> **What happens when the model is held fixed and the harness changes?**
+
+That is the motivation behind the same-model experiments in our technical report.
+
+## Technical report
+
+📄 **[Decoupling the Harness from the Model](paper/yodex-harness-paper-v2.pdf)**
+*Yodex Team · MLPal Research*
+
+The report covers:
+
+* same-model isolation
+* official SWE-bench grading with hidden tests
+* harness comparisons (Claude Code, OpenAI Codex, Aider, OpenCode)
+* token and latency measurements
+* model routing and delegation
+* divergent patch analysis
+* evaluation limitations
+
+## Gateway
+
+Yodex requires an MLPal Gateway.
+
+You can use the managed gateway or run one yourself.
+
+### Managed
+
+```bash
+export YODEX_API_KEY=mlpal_sk_...
+yodex "fix the failing test"
+```
+
+Keys can be created at [mlpal.ai](https://mlpal.ai).
+
+### Self-hosted
+
+The gateway is open source at [github.com/mlpalOld/mlpal-gateway](https://github.com/mlpalOld/mlpal-gateway) (Apache-2.0) and can be started with Docker Compose.
+
+```bash
+export YODEX_GATEWAY_URL=http://localhost:8000
+export YODEX_API_KEY=mlpal_sk_...
+
+yodex "fix the failing test"
+```
+
+The managed and self-hosted gateways expose the same API.
+
+Available models depend on the providers configured on the gateway.
+
+## Issues and feedback
+
+Bug reports and feature requests are welcome.
+
+[Open an issue](../../issues/new/choose)
+
+The terminal CLI is available now.
+
+Web and editor interfaces are in development and use the same underlying Yodex engine.
+
+Contact: [contact@mlpal.ai](mailto:contact@mlpal.ai)
 
 ## License
 
-© 2026 mlpal inc. All rights reserved — see [LICENSE.md](LICENSE.md). The
-documentation, paper, and benchmark data in this repository may be shared
-unmodified with attribution.
+© 2026 MLPal Inc. All rights reserved.
+
+See [LICENSE.md](LICENSE.md).
+
+Documentation, benchmark data, and the technical report in this repository may be redistributed unmodified with attribution.
