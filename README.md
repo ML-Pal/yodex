@@ -16,6 +16,14 @@ npm install -g @mlpal/yodex
 ```
 
 Yodex runs coding-agent workflows against any model available through an MLPal Gateway.
+Get an API key either way:
+
+- **Managed** — create a key at **[mlpal.ai](https://mlpal.ai)**. Yodex talks to
+  `https://models.mlpal.ai` by default; the key is all you need.
+- **Self-hosted** — run the open-source
+  [MLPal Gateway](https://github.com/ML-Pal/mlpal-gateway) with your own
+  provider keys (`docker compose up`), mint a key in its console, and point
+  Yodex at your box: `export YODEX_GATEWAY_URL=http://localhost:8000`.
 
 ```bash
 export YODEX_API_KEY=mlpal_sk_...
