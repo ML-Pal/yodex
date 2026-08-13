@@ -151,6 +151,7 @@ Follow-up runs on `claude-opus-5`:
 
 * [Harness comparison and delegation](benchmarks/vs-claude-code-opus5.md) (July 2026) — equal correctness on focused fixes at ~1.6–1.8× lower cost; ~10× lower sub-agent cost via catalog routing.
 * [SWE-bench recheck](benchmarks/swe-recheck-opus5-2026-08-11.md) (August 2026) — 2/2 vs 2/2 resolved; ~2× fewer output tokens, ~6× lower compute cost.
+* [Five-harness panel](benchmarks/five-harness-panel-opus5-2026-08-13.md) (August 2026) — Yodex, Claude Code, OpenCode, pi, and Cline on pinned `claude-opus-5`, 7 tasks × 2 reps: **all 70 runs correct**; Yodex leanest on output tokens (91k total, 10k mean on fresh hard tasks), with a 6.8× wall-clock and 3.5× token spread across harnesses for identical outcomes.
 
 These are experiments conducted by the Yodex authors, some at small sample sizes. Each report includes methodology, raw results, limitations, and the authors' conflict of interest.
 
