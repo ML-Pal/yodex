@@ -21,7 +21,7 @@ Get an API key either way:
 - **Managed** — create a key at **[mlpal.ai](https://mlpal.ai)**. Yodex talks to
   `https://models.mlpal.ai` by default; the key is all you need.
 - **Self-hosted** — run the open-source
-  [MLPal Gateway](https://github.com/ML-Pal/mlpal-gateway) with your own
+  [MLPal Gateway](https://github.com/mlpal-ai/mlpal-gateway) with your own
   provider keys (`docker compose up`), mint a key in its console, and point
   Yodex at your box: `export YODEX_GATEWAY_URL=http://localhost:8000`.
 
@@ -227,7 +227,7 @@ Keys can be created at [mlpal.ai](https://mlpal.ai).
 
 ### Self-hosted
 
-The gateway is open source at [github.com/ML-Pal/mlpal-gateway](https://github.com/ML-Pal/mlpal-gateway) (Apache-2.0) and can be started with Docker Compose.
+The gateway is open source at [github.com/mlpal-ai/mlpal-gateway](https://github.com/mlpal-ai/mlpal-gateway) (Apache-2.0) and can be started with Docker Compose.
 
 ```bash
 export YODEX_GATEWAY_URL=http://localhost:8000
