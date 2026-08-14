@@ -15,8 +15,8 @@
 npm install -g @mlpal/yodex
 ```
 
-Yodex runs coding-agent workflows against any model available through an MLPal Gateway.
-Get an API key either way:
+Yodex is a coding agent — a harness that works with an MLPal Gateway, managed or
+self-hosted, against any model the gateway serves. Get an API key either way:
 
 - **Managed** — create a key at **[mlpal.ai](https://mlpal.ai)**. Yodex talks to
   `https://models.mlpal.ai` by default; the key is all you need.
@@ -26,8 +26,20 @@ Get an API key either way:
   Yodex at your box: `export YODEX_GATEWAY_URL=http://localhost:8000`.
 
 ```bash
-export YODEX_API_KEY=mlpal_sk_...
+export YODEX_API_KEY=mlpal_sk_...   # create your key at https://mlpal.ai
 
+cd your-project
+yodex                               # interactive session in this repo
+```
+
+Yodex picks up your project's context automatically: a `YODEX.md`, `AGENTS.md`,
+or `CLAUDE.md` at the repo root, plus any skills, MCP servers, and plugin packs
+you have configured. Run `/init` inside a session to analyze the repo and write
+an `AGENTS.md` for you.
+
+You can also run one-shot tasks:
+
+```bash
 yodex "explain this repository"
 yodex "fix the failing tests"
 yodex "find the cause of this regression and patch it"
@@ -139,6 +151,7 @@ Follow-up runs on `claude-opus-5`:
 
 * [Harness comparison and delegation](benchmarks/vs-claude-code-opus5.md) (July 2026) — equal correctness on focused fixes at ~1.6–1.8× lower cost; ~10× lower sub-agent cost via catalog routing.
 * [SWE-bench recheck](benchmarks/swe-recheck-opus5-2026-08-11.md) (August 2026) — 2/2 vs 2/2 resolved; ~2× fewer output tokens, ~6× lower compute cost.
+* [Five-harness panel](benchmarks/five-harness-panel-opus5-2026-08-13.md) (August 2026) — Yodex, Claude Code, OpenCode, pi, and Cline on pinned `claude-opus-5`, 7 tasks × 2 reps: **all 70 runs correct**; Yodex leanest on output tokens (91k total, 10k mean on fresh hard tasks), with a 6.8× wall-clock and 3.5× token spread across harnesses for identical outcomes.
 
 These are experiments conducted by the Yodex authors, some at small sample sizes. Each report includes methodology, raw results, limitations, and the authors' conflict of interest.
 
